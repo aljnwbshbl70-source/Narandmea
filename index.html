@@ -3,62 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع القلب البرمجي</title>
+    <title>غزل القلوب - يامي 🇾🇪</title>
     <style>
-        body { margin: 0; background: #000; color: white; font-family: 'Arial', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
+        body { margin: 0; background-color: #000; color: white; font-family: 'Arial', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
-        .overlay { position: relative; background: rgba(0, 0, 0, 0.9); padding: 30px; border-radius: 25px; text-align: center; border: 2px solid #ff4500; box-shadow: 0 0 40px rgba(255, 69, 0, 0.5); z-index: 100; width: 85%; max-width: 350px; backdrop-filter: blur(10px); }
+        /* واجهة إدخال البيانات */
+        .overlay { position: relative; background: rgba(15, 15, 15, 0.95); padding: 30px; border-radius: 20px; text-align: center; border: 1px solid #ff4500; box-shadow: 0 0 30px rgba(255, 69, 0, 0.4); z-index: 100; width: 85%; max-width: 350px; backdrop-filter: blur(10px); }
         
-        h2 { color: #ff4500; text-shadow: 0 0 10px #ff4500; margin-bottom: 20px; }
-        input, select, button { display: block; width: 100%; margin: 10px 0; padding: 14px; border-radius: 12px; border: 1px solid #333; font-size: 15px; background: #111; color: white; box-sizing: border-box; }
+        h2 { color: #ff4500; margin-top: 0; font-size: 22px; text-shadow: 0 0 10px #ff4500; }
+        input, select, button { display: block; width: 100%; margin: 12px 0; padding: 14px; border-radius: 10px; border: 1px solid #333; font-size: 16px; background: #1a1a1a; color: white; box-sizing: border-box; outline: none; }
         
-        button { background: linear-gradient(45deg, #ff4500, #00ccff); border: none; font-weight: bold; cursor: pointer; color: white; }
+        button { background: linear-gradient(45deg, #ff4500, #ff0055); cursor: pointer; font-weight: bold; border: none; transition: 0.3s; }
         button:hover { transform: scale(1.05); box-shadow: 0 0 20px #ff4500; }
-
-        /* إخفاء مشغل يوتيوب */
-        #youtube-player { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-        .yami-rights { position: fixed; bottom: 10px; left: 10px; font-size: 11px; color: #444; z-index: 10; }
+        
+        .credits { position: fixed; bottom: 10px; left: 10px; font-size: 11px; color: #333; z-index: 5; }
     </style>
 </head>
 <body>
 
-    <div class="yami-rights">برمجة: يامي 🇾🇪</div>
-    <canvas id="canvas"></canvas>
-
-    <div id="youtube-player"></div>
+    <div class="credits">تصميم: يامي 🇾🇪</div>
 
     <div class="overlay" id="setup">
-        <h2>LOVE ✨</h2>
-        <input type="text" id="name1" placeholder="أنا مية (اسمك)">
-        <input type="text" id="name2" placeholder="كلكن نار (اسمه)">
+        <h2>أداة غزل القلوب 🇾🇪</h2>
+        <input type="text" id="name1" placeholder="الاسم الأول">
+        <input type="text" id="name2" placeholder="الاسم الثاني">
         <select id="relation">
             <option value="♥️">♥️ حب</option>
-            <option value="🫶💗">💗 صداقة</option>
-            <option value="🩵">🩵 غالي</option>
+            <option value="🫶💗">🫶💗 صداقة</option>
+            <option value="🩵">🩵 قريب</option>
         </select>
-        <button onclick="startMagic()">ابدأ السحر الموسيقي</button>
+        <button onclick="startDrawing()">ابدأ الرسم البطيء</button>
     </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <canvas id="heartCanvas"></canvas>
 
 <script>
-    let player;
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('heartCanvas');
     const ctx = canvas.getContext('2d');
+    
     let w, h, name1, name2, emoji;
     let i = 0;
     let finished = false;
-
-    // تجهيز مشغل يوتيوب
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('youtube-player', {
-            height: '1',
-            width: '1',
-            videoId: 'rmFGE-0ZId8', // ID أغنية نجمة
-            playerVars: { 'autoplay': 0, 'loop': 1, 'playlist': 'rmFGE-0ZId8' }
-        });
-    }
 
     function resize() {
         w = canvas.width = window.innerWidth;
@@ -67,68 +53,73 @@
     window.addEventListener('resize', resize);
     resize();
 
+    // معادلات القلب الحسابية
     function heartX(n) { return 15 * Math.pow(Math.sin(n), 3); }
     function heartY(n) { return -(12 * Math.cos(n) - 5 * Math.cos(2*n) - 2 * Math.cos(3*n) - Math.cos(4*n)); }
 
-    function startMagic() {
-        name1 = document.getElementById('name1').value || "مية";
-        name2 = document.getElementById('name2').value || "نار";
+    function startDrawing() {
+        name1 = document.getElementById('name1').value || "أنت";
+        name2 = document.getElementById('name2').value || "هو";
         emoji = document.getElementById('relation').value;
-        
-        // تشغيل الأغنية من يوتيوب}
         
         document.getElementById('setup').style.display = 'none';
         animate();
-    
+    }
 
     function animate() {
+        // تأثير مسح خفيف لترك أثر جمالي
         ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
         ctx.fillRect(0, 0, w, h);
 
         ctx.save();
         ctx.translate(w/2, h/2);
         
-        let pulse = Math.sin(Date.now() / 1500) * 0.4 + 12; 
+        // تأثير النبض البطيء للهيكل
+        let pulse = Math.sin(Date.now() / 1500) * 0.3 + 12;
 
-        let limit = finished ? 630 : i;
-        for(let n = 0; n < limit; n += 0.6) {
+        let currentLimit = finished ? 630 : i;
+        
+        for(let n = 0; n < currentLimit; n += 0.8) {
             let x = heartX(n) * pulse;
             let y = heartY(n) * pulse;
             
-            // تدرج ألوان ناري ومائي
-            let hue = (n < 315) ? 20 : 190; 
-            ctx.strokeStyle = `hsla(${hue}, 100%, 60%, 0.7)`;
-            ctx.lineWidth = 1.5;
+            // تدرج لوني ناعم
+            ctx.strokeStyle = `hsla(${(n*10 + Date.now()/20)%360}, 80%, 60%, 0.8)`;
+            ctx.lineWidth = 1.2;
             
             ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(x, y);
+            ctx.moveTo(x, y);
+            ctx.lineTo(0, 0); // العودة للمركز (تأثير الغزل)
             ctx.stroke();
         }
         ctx.restore();
 
-        drawText();
+        // رسم الأسماء في الأعلى
+        drawNames();
 
         if (i < 630) {
-            i += 0.2; // جعلتها أبطأ بكثير بناءً على طلبك
+            i += 0.4; // سرعة الرسم (بطيئة كما طلبت)
             requestAnimationFrame(animate);
         } else {
             finished = true;
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animate); // الاستمرار في النبض بعد الانتهاء
         }
     }
 
-    function drawText() {
+    function drawNames() {
         ctx.save();
         ctx.fillStyle = "white";
         ctx.shadowBlur = 15;
         ctx.shadowColor = "#ff4500";
-        ctx.font = "bold 26px Arial";
+        ctx.font = "bold 28px Arial";
         ctx.textAlign = "center";
-        let float = Math.sin(Date.now() / 1500) * 5;
-        ctx.fillText(`${name1} ${emoji} ${name2}`, w/2, h*0.2 + float);
+        
+        // حركة عائمة للنص
+        let float = Math.sin(Date.now() / 1500) * 6;
+        ctx.fillText(`${name1} ${emoji} ${name2}`, w/2, h*0.18 + float);
         ctx.restore();
     }
 </script>
 </body>
 </html>
+
